@@ -1,0 +1,5 @@
+flamingo {
+	Flamingo\Task\Test {
+
+	}
+}

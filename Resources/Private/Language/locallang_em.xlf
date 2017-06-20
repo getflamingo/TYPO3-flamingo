@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" product-name="flamingo">
+		<header/>
+		<body>
+			<trans-unit id="phar">
+				<source>Path to phar executable</source>
+			</trans-unit>
+			<trans-unit id="debug">
+				<source>Output debug information</source>
+			</trans-unit>
+			<trans-unit id="force">
+				<source>Force execution through errors</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
