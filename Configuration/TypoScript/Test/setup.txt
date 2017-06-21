@@ -1,5 +1,0 @@
-flamingo {
-	Flamingo\Task\Test {
-
-	}
-}
