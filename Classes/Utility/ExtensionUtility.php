@@ -2,11 +2,10 @@
 
 namespace Ubermanu\Flamingo\Utility;
 
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\Exception\NoSuchOptionException;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use Ubermanu\Flamingo\Exception\IncludedResourceException;
+use Ubermanu\Flamingo\Exception\NoSuchOptionException;
 
 /**
  * Class ExtensionUtility
@@ -15,17 +14,20 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 class ExtensionUtility
 {
     /**
+     * Find a certain option in the extConf array
+     *
      * @param string $option
+     * @param bool $graceful
      * @return mixed
      * @throws NoSuchOptionException
      */
-    protected static function getExtensionConfiguration($option)
+    protected static function getConfigurationOption($option, $graceful = false)
     {
         $extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['flamingo']);
 
-        if (false === array_key_exists($option, $extConf)) {
+        if ((false === array_key_exists($option, $extConf)) && ($graceful === false)) {
             throw new NoSuchOptionException(
-                sprintf('The option "%s" does not exist, please check your LocalConfiguration.php!', $option)
+                sprintf('The option "%s" does not exist in the "flamingo" extension configuration', $option)
             );
         }
 
@@ -34,12 +36,13 @@ class ExtensionUtility
 
     /**
      * Return the full path to the flamingo.phar executable
+     *
      * @return string
      * @throws FileDoesNotExistException
      */
     protected static function getPharPath()
     {
-        $pharPath = GeneralUtility::getFileAbsFileName(self::getExtensionConfiguration('phar'));
+        $pharPath = GeneralUtility::getFileAbsFileName(self::getConfigurationOption('phar'));
 
         if (false === file_exists($pharPath)) {
             throw new FileDoesNotExistException(sprintf('The file "%s" does not exist!', $pharPath));
@@ -50,6 +53,7 @@ class ExtensionUtility
 
     /**
      * Requires Flamingo source files so Flamingo can run in a TYPO3 env
+     *
      * @throws \Exception
      */
     public static function requireLibraries()
@@ -57,12 +61,13 @@ class ExtensionUtility
         @include 'phar://' . self::getPharPath() . '/vendor/autoload.php';
 
         if (false === class_exists('Flamingo\\Flamingo')) {
-            throw new \Exception('Flamingo resources could not be loaded from the *.phar file!');
+            throw new IncludedResourceException('Flamingo resources could not be loaded from the *.phar file!');
         }
     }
 
     /**
      * Return the path to the default configuration file
+     *
      * @return string
      */
     public static function defaultConfigurationFileName()
@@ -72,6 +77,7 @@ class ExtensionUtility
 
     /**
      * Get a list of configuration files
+     *
      * @return array
      */
     public static function getConfigurationFiles()
@@ -84,7 +90,7 @@ class ExtensionUtility
      */
     public static function isDebugEnabled()
     {
-        return boolval(self::getExtensionConfiguration('debug'));
+        return self::getConfigurationOption('debug') === '1';
     }
 
     /**
@@ -92,6 +98,6 @@ class ExtensionUtility
      */
     public static function isForceEnabled()
     {
-        return boolval(self::getExtensionConfiguration('force'));
+        return self::getConfigurationOption('force') === '1';
     }
 }

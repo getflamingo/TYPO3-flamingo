@@ -17,12 +17,6 @@ class GoogleHelper
     const geocodeUri = 'https://maps.googleapis.com/maps/api/geocode/json';
 
     /**
-     * Google API key
-     * @var string
-     */
-    const apiKey = 'AIzaSyC9v0Z7vGXL7Qyv3wx7qelG44Aki82LsQo';
-
-    /**
      * Use Google geocode system
      * - Uses last address line (if multi-line)
      *
@@ -51,11 +45,12 @@ class GoogleHelper
             // Set up parameters array
             $params = [
                 'address' => implode(',', array_filter($locationData)),
-                'apiKey' => self::apiKey,
+                'apiKey' => '',
             ];
 
             // Build request url
             $requestUri = self::geocodeUri . '?' . http_build_query($params);
+
             // Execute request
             if ($request = json_decode(file_get_contents($requestUri))) {
 
@@ -67,6 +62,7 @@ class GoogleHelper
                     $record['latitude'] = $location->lat;
 
                     Analog::debug(sprintf('Geocode: %s - %s', $record['title'], json_encode($location)));
+
                 } else {
 
                     Analog::debug(sprintf('Geocode: %s - %s', $record['title'], $request->status));

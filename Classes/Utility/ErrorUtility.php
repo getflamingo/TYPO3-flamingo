@@ -25,6 +25,8 @@ class ErrorUtility
     ];
 
     /**
+     * Retrieve error code from an error level
+     *
      * @param $errorLevel
      * @return mixed|string
      */
@@ -34,6 +36,8 @@ class ErrorUtility
     }
 
     /**
+     * Generate a formatted message from the given error
+     *
      * @param $error
      * @return bool|string
      */
