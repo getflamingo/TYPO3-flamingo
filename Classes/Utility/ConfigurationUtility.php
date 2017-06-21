@@ -5,44 +5,33 @@ namespace Ubermanu\Flamingo\Utility;
 use TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ubermanu\Flamingo\Exception\IncludedResourceException;
-use Ubermanu\Flamingo\Exception\NoSuchOptionException;
 
 /**
- * Class ExtensionUtility
+ * Class ConfigurationUtility
  * @package Ubermanu\Flamingo\Utility
  */
-class ExtensionUtility
+class ConfigurationUtility
 {
     /**
-     * Find a certain option in the extConf array
+     * Get extension configuration from LocalConfiguration.php
      *
-     * @param string $option
-     * @param bool $graceful
-     * @return mixed
-     * @throws NoSuchOptionException
+     * @return array
      */
-    protected static function getConfigurationOption($option, $graceful = false)
+    protected static function getExtensionConfiguration()
     {
-        $extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['flamingo']);
-
-        if ((false === array_key_exists($option, $extConf)) && ($graceful === false)) {
-            throw new NoSuchOptionException(
-                sprintf('The option "%s" does not exist in the "flamingo" extension configuration', $option)
-            );
-        }
-
-        return $extConf[$option];
+        return unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['flamingo']) ?: [];
     }
 
     /**
      * Return the full path to the flamingo.phar executable
+     * Throws error if the file could not be found
      *
      * @return string
      * @throws FileDoesNotExistException
      */
     protected static function getPharPath()
     {
-        $pharPath = GeneralUtility::getFileAbsFileName(self::getConfigurationOption('phar'));
+        $pharPath = GeneralUtility::getFileAbsFileName(self::getExtensionConfiguration()['phar']);
 
         if (false === file_exists($pharPath)) {
             throw new FileDoesNotExistException(sprintf('The file "%s" does not exist!', $pharPath));
@@ -53,8 +42,9 @@ class ExtensionUtility
 
     /**
      * Requires Flamingo source files so Flamingo can run in a TYPO3 env
+     * Test if the main Flamingo class can be called (so we avoid future errors)
      *
-     * @throws \Exception
+     * @throws IncludedResourceException
      */
     public static function requireLibraries()
     {
@@ -67,6 +57,7 @@ class ExtensionUtility
 
     /**
      * Return the path to the default configuration file
+     * This file is contained in the *.phar resource
      *
      * @return string
      */
@@ -76,28 +67,22 @@ class ExtensionUtility
     }
 
     /**
-     * Get a list of configuration files
+     * Check if debug mode is active
      *
-     * @return array
-     */
-    public static function getConfigurationFiles()
-    {
-        return $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['flamingo']['configuration'] ?: [];
-    }
-
-    /**
      * @return bool
      */
     public static function isDebugEnabled()
     {
-        return self::getConfigurationOption('debug') === '1';
+        return self::getExtensionConfiguration()['debug'] === '1';
     }
 
     /**
+     * Check if force mode is active
+     *
      * @return bool
      */
     public static function isForceEnabled()
     {
-        return self::getConfigurationOption('force') === '1';
+        return self::getExtensionConfiguration()['force'] === '1';
     }
 }

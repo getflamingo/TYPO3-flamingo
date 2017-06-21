@@ -5,8 +5,8 @@ namespace Ubermanu\Flamingo\Service;
 use Flamingo\Flamingo;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Ubermanu\Flamingo\Exception\FileNotFoundException;
-use Ubermanu\Flamingo\Utility\ExtensionUtility;
+use Ubermanu\Flamingo\Utility\ConfigurationUtility;
+use Ubermanu\Flamingo\Utility\FlamingoUtility;
 
 /**
  * Class FlamingoService
@@ -25,23 +25,15 @@ class FlamingoService implements SingletonInterface
      */
     public function initializeObject()
     {
-        ExtensionUtility::requireLibraries();
+        ConfigurationUtility::requireLibraries();
         $this->flamingo = GeneralUtility::makeInstance(Flamingo::class);
 
         // Load default configuration from flamingo.phar
-        $this->flamingo->addConfiguration(ExtensionUtility::defaultConfigurationFileName());
+        $this->flamingo->addConfiguration(ConfigurationUtility::defaultConfigurationFileName());
 
-        // Load configuration from the GLOBALS array
-        foreach (ExtensionUtility::getConfigurationFiles() as $fileName) {
-
-            // Find the absolute path to the configuration file (Supports EXT: syntax)
-            $fileName = GeneralUtility::getFileAbsFileName($fileName);
-
-            if (false === file_exists($fileName)) {
-                throw new FileNotFoundException(sprintf('The configuration file "%s" could not be found'));
-            }
-
-            $this->flamingo->addConfiguration(file_get_contents($fileName));
+        // Load configuration content from the GLOBALS array
+        foreach (FlamingoUtility::getConfigurationArray() as $configuration) {
+            $this->flamingo->addConfiguration($configuration);
         }
     }
 

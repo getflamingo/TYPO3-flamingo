@@ -1,0 +1,26 @@
+{namespace v=FluidTYPO3\Vhs\ViewHelpers}
+
+# This file is generated using Fluid template system
+# It will be included at the top of each included configuration files
+# The TYPO3_CONF_VARS array values can be used
+# Unique ID are used as variable names so there is no conflict whatsoever
+# You may never include this configuration file manually, use the ExtensionUtility
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Access to current environment DB
+#
+#   Flamingo/Task/Default:
+#     Src: *TYPO3_DB
+
+{v:system.uniqId(prefix:'TYPO3_DB')}: &TYPO3_DB
+  type: db
+  driver: mysql
+  server: {TYPO3_CONF_VARS.DB.host}
+  port: {TYPO3_CONF_VARS.DB.port}
+  username: {TYPO3_CONF_VARS.DB.username}
+  password: {TYPO3_CONF_VARS.DB.password}
+  database: {TYPO3_CONF_VARS.DB.database}
+  charset: UTF8
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

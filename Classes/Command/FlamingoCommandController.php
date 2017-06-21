@@ -4,8 +4,8 @@ namespace Ubermanu\Flamingo\Command;
 
 use Analog\Analog;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
+use Ubermanu\Flamingo\Utility\ConfigurationUtility;
 use Ubermanu\Flamingo\Utility\ErrorUtility;
-use Ubermanu\Flamingo\Utility\ExtensionUtility;
 
 /**
  * Class FlamingoCommandController
@@ -28,7 +28,7 @@ class FlamingoCommandController extends CommandController
         Analog::handler(function ($error) {
 
             if (
-                (false === ExtensionUtility::isDebugEnabled()) &&
+                (false === ConfigurationUtility::isDebugEnabled()) &&
                 ($error['level'] === Analog::DEBUG)
             ) {
                 return;
@@ -37,7 +37,7 @@ class FlamingoCommandController extends CommandController
             $this->outputLine(ErrorUtility::getMessage($error));
 
             if (
-                (false === ExtensionUtility::isForceEnabled()) &&
+                (false === ConfigurationUtility::isForceEnabled()) &&
                 ($error['level'] == Analog::ERROR)
             ) {
                 die;
