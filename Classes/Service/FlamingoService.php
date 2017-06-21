@@ -29,7 +29,8 @@ class FlamingoService implements SingletonInterface
         $this->flamingo = GeneralUtility::makeInstance(Flamingo::class);
 
         // Load default configuration from flamingo.phar
-        $this->flamingo->addConfiguration(ConfigurationUtility::defaultConfigurationFileName());
+        $defaultConfiguration = ConfigurationUtility::defaultConfigurationFileName();
+        $this->flamingo->addConfiguration(file_get_contents($defaultConfiguration));
 
         // Load configuration content from the GLOBALS array
         foreach (FlamingoUtility::getConfigurationArray() as $configuration) {
