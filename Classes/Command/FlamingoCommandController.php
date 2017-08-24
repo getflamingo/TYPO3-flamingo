@@ -20,6 +20,7 @@ class FlamingoCommandController extends CommandController
     protected $flamingoService;
 
     /**
+     * Execute a configured task
      * @param string $task
      */
     public function runCommand($task = 'default')
@@ -46,5 +47,14 @@ class FlamingoCommandController extends CommandController
 
         // Run specified task
         $this->flamingoService->run($task);
+    }
+
+    /**
+     * Current flamingo version
+     * @cli
+     */
+    public function versionCommand()
+    {
+        $this->outputLine($GLOBALS['FLAMINGO']['CONF']['App']['Version']);
     }
 }
