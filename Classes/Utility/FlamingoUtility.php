@@ -21,7 +21,6 @@ class FlamingoUtility
      * Generate a YML file using Fluid rendering engine
      * Pass TYPO3_CONF_VARS into it so global definitions can be used
      * See the actual TYPO3.yml for more information
-     * TODO: Put this in cache for performance purposes
      */
     protected static function generateTypo3Configuration()
     {

@@ -16,11 +16,11 @@
 {v:system.uniqId(prefix:'TYPO3_DB')}: &TYPO3_DB
   type: db
   driver: mysql
-  server: {TYPO3_CONF_VARS.DB.host}
-  port: {TYPO3_CONF_VARS.DB.port}
-  username: {TYPO3_CONF_VARS.DB.username}
-  password: {TYPO3_CONF_VARS.DB.password}
-  database: {TYPO3_CONF_VARS.DB.database}
-  charset: UTF8
+  server: {TYPO3_CONF_VARS.DB.Connections.Default.host}
+  port: {TYPO3_CONF_VARS.DB.Connections.Default.port}
+  username: {TYPO3_CONF_VARS.DB.Connections.Default.user}
+  password: {TYPO3_CONF_VARS.DB.Connections.Default.password}
+  database: {TYPO3_CONF_VARS.DB.Connections.Default.dbname}
+  charset: {TYPO3_CONF_VARS.DB.Connections.Default.charset}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
