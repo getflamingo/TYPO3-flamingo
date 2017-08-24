@@ -3,6 +3,7 @@
 namespace Ubermanu\Flamingo\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use Ubermanu\Flamingo\Exception\FileNotFoundException;
 
@@ -29,6 +30,15 @@ class FlamingoUtility
         // File does not exist, throw error
         if (false === file_exists($typo3ConfigurationFileName)) {
             throw new FileNotFoundException(sprintf('The TYPO3 configuration file "%s" could not be found'));
+        }
+
+        $TYPO3_CONF_VARS = $GLOBALS['TYPO3_CONF_VARS'];
+
+        // Add compatibility for previous TYPO3 versions
+        if (VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version) < 8000000) {
+            $TYPO3_CONF_VARS['DB']['Connections']['Default'] = $TYPO3_CONF_VARS['DB'];
+            $TYPO3_CONF_VARS['DB']['Connections']['Default']['user'] = $TYPO3_CONF_VARS['DB']['username'];
+            $TYPO3_CONF_VARS['DB']['Connections']['Default']['dbname'] = $TYPO3_CONF_VARS['DB']['database'];
         }
 
         /** @var StandaloneView $typo3Configuration */
@@ -61,7 +71,7 @@ class FlamingoUtility
 
         // File does not exist, throw error
         if (false === file_exists($fileName)) {
-            throw new FileNotFoundException(sprintf('The configuration file "%s" could not be found'));
+            throw new FileNotFoundException(sprintf('The configuration file "%s" could not be found', $fileName));
         }
 
         // Set configuration as array if not already defined

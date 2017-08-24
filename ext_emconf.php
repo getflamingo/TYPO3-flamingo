@@ -5,14 +5,14 @@ $EM_CONF[$_EXTKEY] = [
     'description' => 'Task runner for data processing',
     'category' => 'be',
     'state' => 'beta',
-    'version' => '0.7.0',
+    'version' => '0.8.0',
     'author' => 'ubermanu',
     'author_email' => '',
     'uploadFolder' => false,
     'clearCacheOnLoad' => false,
     'constraints' => [
         'depends' => [
-            'typo3' => '8.7.0-',
+            'typo3' => '6.2.0-8.99.99',
         ],
     ],
 ];
