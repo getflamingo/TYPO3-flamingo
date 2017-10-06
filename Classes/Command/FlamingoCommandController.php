@@ -21,27 +21,27 @@ class FlamingoCommandController extends CommandController
 
     /**
      * Execute a configured task
+     *
      * @param string $task
+     * @param bool $debug
+     * @param bool $force
      */
-    public function runCommand($task = 'default')
+    public function runCommand($task = 'default', $debug = false, $force = false)
     {
         // Register logger using console messages
-        Analog::handler(function ($error) {
+        Analog::handler(function ($error) use ($debug, $force) {
 
-            if (
-                (false === ConfigurationUtility::isDebugEnabled()) &&
-                ($error['level'] === Analog::DEBUG)
-            ) {
+            // Skip debug
+            if (!$debug && ($error['level'] === Analog::DEBUG)) {
                 return;
             }
 
+            // Output current log
             $this->outputLine(ErrorUtility::getMessage($error));
 
-            if (
-                (false === ConfigurationUtility::isForceEnabled()) &&
-                ($error['level'] == Analog::ERROR)
-            ) {
-                die;
+            // The log is an error, stop
+            if (!$force && ($error['level'] == Analog::ERROR)) {
+                $this->sendAndExit(Analog::ERROR);
             }
         });
 
@@ -55,6 +55,6 @@ class FlamingoCommandController extends CommandController
      */
     public function versionCommand()
     {
-        $this->outputLine($GLOBALS['FLAMINGO']['CONF']['App']['Version']);
+        $this->outputLine($GLOBALS['FLAMINGO']['Version']);
     }
 }

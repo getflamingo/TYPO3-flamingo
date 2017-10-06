@@ -37,7 +37,7 @@ class ConfigurationUtility
             throw new FileDoesNotExistException(sprintf('The file "%s" does not exist!', $pharPath));
         }
 
-        return $pharPath;
+        return 'phar://' . $pharPath;
     }
 
     /**
@@ -48,7 +48,7 @@ class ConfigurationUtility
      */
     public static function requireLibraries()
     {
-        @include 'phar://' . self::getPharPath() . '/vendor/autoload.php';
+        @include self::getPharPath() . '/vendor/autoload.php';
 
         if (false === class_exists('Flamingo\\Flamingo')) {
             throw new IncludedResourceException('Flamingo resources could not be loaded from the *.phar file!');
@@ -56,33 +56,16 @@ class ConfigurationUtility
     }
 
     /**
-     * Return the path to the default configuration file
-     * This file is contained in the *.phar resource
+     * Return the path to the default configuration files
+     * These files are contained in the *.phar resource
      *
-     * @return string
+     * @return array
      */
-    public static function defaultConfigurationFileName()
+    public static function defaultConfigurationFileNames()
     {
-        return 'phar://' . self::getPharPath() . '/bin/default.yml';
-    }
-
-    /**
-     * Check if debug mode is active
-     *
-     * @return bool
-     */
-    public static function isDebugEnabled()
-    {
-        return self::getExtensionConfiguration()['debug'] === '1';
-    }
-
-    /**
-     * Check if force mode is active
-     *
-     * @return bool
-     */
-    public static function isForceEnabled()
-    {
-        return self::getExtensionConfiguration()['force'] === '1';
+        return [
+            self::getPharPath() . '/bin/DefaultConfiguration.yaml',
+            self::getPharPath() . '/bin/AdditionalConfiguration.yaml',
+        ];
     }
 }

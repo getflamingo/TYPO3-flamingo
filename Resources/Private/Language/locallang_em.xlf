@@ -3,14 +3,8 @@
 	<file source-language="en" datatype="plaintext" original="messages" product-name="flamingo">
 		<header/>
 		<body>
-			<trans-unit id="phar">
-				<source>Path to phar executable</source>
-			</trans-unit>
-			<trans-unit id="debug">
-				<source>Output debug information</source>
-			</trans-unit>
-			<trans-unit id="force">
-				<source>Force execution through errors</source>
+			<trans-unit id="phar" xml:space="preserve">
+				<source>Path to flamingo.phar executable</source>
 			</trans-unit>
 		</body>
 	</file>
