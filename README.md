@@ -8,9 +8,13 @@ If you are new to flamingo, check out the [wiki](https://github.com/ubermanu/fla
 Add your YML files in your extension in the folder **Configuration/Flamingo/**.<br>
 Then you can register your configuration files. Example:
 
-    \Ubermanu\Flamingo\Utility\FlamingoUtility::registerConfigurationFile(
-        'EXT:example/Configuration/Flamingo/Test.yml'
-    );
+    plugin.tx_flamingo {
+        settings {
+            yamlConfigurations {
+                10: EXT:example/Configuration/Yaml/Example.yaml
+            }
+        }
+    }
 
 ### Variables
 
@@ -35,11 +39,11 @@ Example:
 You can add custom helpers in your **Classes/Helper/** folder.<br>
 In the near future, configuration will be passed into user functions, so it become more customizable.
 
-    class TestHelper
+    class Test implements \Ubermanu\Flamingo\UserFunction\UserFunctionInterface
     {
-        public function run($data)
+        public function run(array $configuration, TaskRuntime $taskRuntime)
         {
-            foreach (current($data) as $row) {
+            foreach ($taskRuntime->getTableByIdentifier(0) as $row) {
                 echo $row['title'];
             }
         }
