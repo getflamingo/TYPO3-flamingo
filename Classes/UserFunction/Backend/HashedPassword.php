@@ -15,7 +15,7 @@ class HashedPassword implements UserFunctionInterface
     /**
      * @var array
      */
-    protected $defaultConfiguration = [
+    protected static $defaultConfiguration = [
         '__source' => 0,
         'mode' => 'FE',
         'readablePasswordColumn' => 'password_clear',
@@ -31,10 +31,10 @@ class HashedPassword implements UserFunctionInterface
      * @param TaskRuntime $taskRuntime
      * @return mixed
      */
-    public function run(array $configuration, TaskRuntime $taskRuntime)
+    public static function run(array $configuration, TaskRuntime $taskRuntime)
     {
         // Replace default configuration
-        $configuration = array_replace($this->defaultConfiguration, $configuration);
+        $configuration = array_replace(self::$defaultConfiguration, $configuration);
 
         /** @var \Flamingo\Core\Table $source */
         $source = $taskRuntime->getTableByIdentifier($configuration['__source']);
@@ -44,7 +44,7 @@ class HashedPassword implements UserFunctionInterface
 
         // Update the existing properties
         foreach ($source as &$row) {
-            $password = $row[$configuration['readablePasswordColumn']] ?: $this->randomPassword();
+            $password = $row[$configuration['readablePasswordColumn']] ?: self::randomPassword();
             $row[$configuration['readablePasswordColumn']] = $password;
             $row[$configuration['hashedPasswordColumn']] = $saltFactory->getHashedPassword($password);
         }
@@ -57,7 +57,7 @@ class HashedPassword implements UserFunctionInterface
      *
      * @return string
      */
-    protected function randomPassword()
+    protected static function randomPassword()
     {
         return bin2hex(random_bytes(5));
     }

@@ -15,5 +15,5 @@ interface UserFunctionInterface
      * @param TaskRuntime $taskRuntime
      * @return mixed
      */
-    public function run(array $configuration, TaskRuntime $taskRuntime);
+    public static function run(array $configuration, TaskRuntime $taskRuntime);
 }
