@@ -11,7 +11,7 @@ Then you can register your configuration files. Example:
     plugin.tx_flamingo {
         settings {
             yamlConfigurations {
-                10: EXT:example/Configuration/Yaml/Example.yaml
+                10 = EXT:example/Configuration/Yaml/Example.yaml
             }
         }
     }
@@ -26,7 +26,7 @@ For the moment only *TYPO3_DB* is available.
 Contains an array of configuration compatible for database sources and destinations.<br>
 Example:
 
-    Flamingo/Task/Default:
+    Default():
       - Src:
         - <<: *TYPO3_DB
           table: sys_domain

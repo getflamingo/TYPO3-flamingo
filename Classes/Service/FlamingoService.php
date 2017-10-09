@@ -56,11 +56,12 @@ class FlamingoService implements SingletonInterface
         }
 
         // Load additional configuration from TYPO3
-        $this->flamingo->addConfiguration($this->generateTypo3Configuration());
+        // This will be added at the top of the generated custom file
+        $typo3configuration = $this->generateTypo3Configuration();
 
         // Load configuration files from the TS settings
         foreach ($this->getConfigurationFiles() as $configuration) {
-            $this->flamingo->addConfiguration(file_get_contents(GeneralUtility::getFileAbsFileName($configuration)));
+            $this->flamingo->addConfiguration($typo3configuration . file_get_contents(GeneralUtility::getFileAbsFileName($configuration)));
         }
     }
 
