@@ -3,7 +3,6 @@
 namespace Ubermanu\Flamingo\Service;
 
 use Flamingo\Flamingo;
-use function Sabre\Xml\Deserializer\keyValue;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
@@ -26,7 +25,7 @@ class FlamingoService implements SingletonInterface
     /**
      * @var string
      */
-    protected $typo3ConfigurationFileName = 'EXT:flamingo/Configuration/Flamingo/TYPO3.yml';
+    protected $typo3ConfigurationFilename = 'EXT:flamingo/Configuration/Yaml/TYPO3.yaml';
 
     /**
      * @var ConfigurationManager
@@ -52,12 +51,15 @@ class FlamingoService implements SingletonInterface
         $this->flamingo = GeneralUtility::makeInstance(Flamingo::class);
 
         // Load default configuration files from flamingo.phar
-        foreach (ConfigurationUtility::defaultConfigurationFileNames() as $configurationFileName) {
-            $this->flamingo->addConfiguration(file_get_contents($configurationFileName));
+        foreach (ConfigurationUtility::defaultConfigurationFiles() as $configurationFilename) {
+            $this->flamingo->addConfiguration(file_get_contents($configurationFilename));
         }
 
-        // Load configuration content from the TS settings
-        foreach ($this->getConfigurationArray() as $configuration) {
+        // Load additional configuration from TYPO3
+        $this->flamingo->addConfiguration($this->generateTypo3Configuration());
+
+        // Load configuration files from the TS settings
+        foreach ($this->getConfigurationFiles() as $configuration) {
             $this->flamingo->addConfiguration(file_get_contents(GeneralUtility::getFileAbsFileName($configuration)));
         }
     }
@@ -69,11 +71,12 @@ class FlamingoService implements SingletonInterface
      */
     protected function generateTypo3Configuration()
     {
-        $typo3ConfigurationFileName = GeneralUtility::getFileAbsFileName($this->typo3ConfigurationFileName);
+        $typo3ConfigurationFilename = GeneralUtility::getFileAbsFileName($this->typo3ConfigurationFilename);
 
         // File does not exist, throw error
-        if (false === file_exists($typo3ConfigurationFileName)) {
-            throw new FileNotFoundException(sprintf('The TYPO3 configuration file "%s" could not be found', $typo3ConfigurationFileName));
+        if (false === file_exists($typo3ConfigurationFilename)) {
+            throw new FileNotFoundException(sprintf('The TYPO3 configuration file "%s" could not be found',
+                $typo3ConfigurationFilename));
         }
 
         $TYPO3_CONF_VARS = $GLOBALS['TYPO3_CONF_VARS'];
@@ -87,7 +90,7 @@ class FlamingoService implements SingletonInterface
 
         /** @var StandaloneView $typo3Configuration */
         $typo3Configuration = GeneralUtility::makeInstance(StandaloneView::class);
-        $typo3Configuration->setTemplatePathAndFilename($typo3ConfigurationFileName);
+        $typo3Configuration->setTemplatePathAndFilename($typo3ConfigurationFilename);
         $typo3Configuration->assign('TYPO3_CONF_VARS', $GLOBALS['TYPO3_CONF_VARS']);
 
         return $typo3Configuration->render();
@@ -98,12 +101,20 @@ class FlamingoService implements SingletonInterface
      *
      * @return array
      */
-    protected function getConfigurationArray()
+    protected function getConfigurationFiles()
     {
-        $settings = $this->configurationManager
-            ->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'flamingo');
+        $settings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+        $yamlConfigurations = (array)$settings['plugin.']['tx_flamingo.']['settings.']['yamlConfigurations.'];
 
-        return (array)$settings['yamlConfigurations'];
+        return GeneralUtility::removeDotsFromTS($yamlConfigurations);
+    }
+
+    /**
+     * Parse given configuration
+     */
+    public function parseConfiguration()
+    {
+        $this->flamingo->parseConfiguration();
     }
 
     /**

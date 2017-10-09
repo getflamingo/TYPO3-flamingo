@@ -61,7 +61,7 @@ class ConfigurationUtility
      *
      * @return array
      */
-    public static function defaultConfigurationFileNames()
+    public static function defaultConfigurationFiles()
     {
         return [
             self::getPharPath() . '/bin/DefaultConfiguration.yaml',
