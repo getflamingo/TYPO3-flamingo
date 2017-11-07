@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="fr" datatype="plaintext" original="messages" product-name="flamingo">
+		<header/>
+		<body>
+			<trans-unit id="phar" approved="yes" xml:space="preserve">
+				<target state="translated">Chemin vers le fichier flamingo.phar</target>
+			</trans-unit>
+			<trans-unit id="typo3configuration" approved="yes" xml:space="preserve">
+				<target state="translated">Chemin vers le fichier YAML de configuration par défaut</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

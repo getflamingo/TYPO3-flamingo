@@ -6,6 +6,9 @@
 			<trans-unit id="phar" xml:space="preserve">
 				<source>Path to flamingo.phar executable</source>
 			</trans-unit>
+			<trans-unit id="typo3configuration" xml:space="preserve">
+				<source>Path to the default TYPO3 configuration YAML file</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

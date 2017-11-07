@@ -1,6 +1,0 @@
-module.tx_flamingo {
-	settings {
-		yamlConfigurations {
-		}
-	}
-}
