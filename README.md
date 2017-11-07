@@ -3,19 +3,6 @@
 Extension that gives TYPO3 environment support to [Flamingo](https://github.com/ubermanu/flamingo).<br>
 If you are new to flamingo, check out the [wiki](https://github.com/ubermanu/flamingo/wiki) available on github.
 
-### Configuration
-
-Add your YML files in your extension in the folder **Configuration/Flamingo/**.<br>
-Then you can register your configuration files. Example:
-
-    plugin.tx_flamingo {
-        settings {
-            yamlConfigurations {
-                10 = EXT:example/Configuration/Yaml/Example.yaml
-            }
-        }
-    }
-
 ### Variables
 
 More references will be implemented in the future (FAL will be first).<br>
@@ -55,6 +42,6 @@ In the near future, configuration will be passed into user functions, so it beco
 
 You can run a task using typo3cms or the cli_dispatch script.
 
-    php typo3cms flamingo:run test
+    php typo3cms flamingo:run --filename EXT:website/Resources/Flamingo/TestConf.yaml --task test
 
-> This command will run the "test" task defined in an included file.
+> This command will run the "test" task defined in the included file.
