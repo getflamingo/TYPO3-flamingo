@@ -21,12 +21,19 @@ class FlamingoCommandController extends CommandController
     /**
      * Execute a configured task
      *
+     * @param string $filename
      * @param string $task
      * @param bool $debug
      * @param bool $force
+     * @param bool $includeTypo3Configuration
      */
-    public function runCommand($task = 'default', $debug = false, $force = false)
-    {
+    public function runCommand(
+        $filename,
+        $task = 'default',
+        $debug = false,
+        $force = false,
+        $includeTypo3Configuration = true
+    ) {
         // Register logger using console messages
         Analog::handler(function ($error) use ($debug, $force) {
 
@@ -45,6 +52,7 @@ class FlamingoCommandController extends CommandController
         });
 
         // Run specified task
+        $this->flamingoService->addConfiguration($filename, $includeTypo3Configuration);
         $this->flamingoService->parseConfiguration();
         $this->flamingoService->run($task);
     }

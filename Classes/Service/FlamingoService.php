@@ -3,10 +3,9 @@
 namespace Ubermanu\Flamingo\Service;
 
 use Flamingo\Flamingo;
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use Ubermanu\Flamingo\Exception\FileNotFoundException;
 use Ubermanu\Flamingo\Utility\ConfigurationUtility;
@@ -15,7 +14,7 @@ use Ubermanu\Flamingo\Utility\ConfigurationUtility;
  * Class FlamingoService
  * @package Ubermanu\Flamingo\Service
  */
-class FlamingoService implements SingletonInterface
+class FlamingoService
 {
     /**
      * @var Flamingo;
@@ -25,25 +24,36 @@ class FlamingoService implements SingletonInterface
     /**
      * @var string
      */
+    protected $extensionName = 'Flamingo';
+
+    /**
+     * @var array
+     */
+    protected $settings = [];
+
+    /**
+     * @var string
+     */
     protected $typo3ConfigurationFilename = 'EXT:flamingo/Configuration/Yaml/TYPO3.yaml';
 
     /**
-     * @var ConfigurationManager
+     * @var ConfigurationManagerInterface
      */
     protected $configurationManager;
 
     /**
-     * @param ConfigurationManager $configurationManager
+     * @param ConfigurationManagerInterface $configurationManager
      * @internal
      */
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
     {
         $this->configurationManager = $configurationManager;
     }
 
     /**
      * Include sources once and instantiate Flamingo task runner
-     * Include default configuration + all the additional files
+     * Load default configuration files and extension settings
+     * @internal
      */
     public function initializeObject()
     {
@@ -55,20 +65,18 @@ class FlamingoService implements SingletonInterface
             $this->flamingo->addConfiguration(file_get_contents($configurationFilename));
         }
 
-        // Load additional configuration from TYPO3
-        // This will be added at the top of the generated custom file
-        $typo3configuration = $this->generateTypo3Configuration();
-
-        // Load configuration files from the TS settings
-        foreach ($this->getConfigurationFiles() as $configuration) {
-            $this->flamingo->addConfiguration($typo3configuration . file_get_contents(GeneralUtility::getFileAbsFileName($configuration)));
-        }
+        // Load extension BE settings
+        $this->settings = $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
+            $this->extensionName
+        );
     }
 
     /**
      * Generate a YAML file using Fluid rendering engine
      * Pass TYPO3_CONF_VARS into it so global definitions can be used
      * See the actual TYPO3.yaml for more information
+     * TODO: Move into ConfigurationUtility
      */
     protected function generateTypo3Configuration()
     {
@@ -98,20 +106,26 @@ class FlamingoService implements SingletonInterface
     }
 
     /**
-     * Return the configuration array
+     * Add a new configuration file into task runner
+     * TODO: Throw error if configuration file does not exist
      *
-     * @return array
+     * @param string $filename
+     * @param bool $includeTypo3Configuration
      */
-    protected function getConfigurationFiles()
+    public function addConfiguration($filename, $includeTypo3Configuration = true)
     {
-        $settings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-        $yamlConfigurations = (array)$settings['plugin.']['tx_flamingo.']['settings.']['yamlConfigurations.'];
+        $configuration = file_get_contents(GeneralUtility::getFileAbsFileName($filename));
 
-        return GeneralUtility::removeDotsFromTS($yamlConfigurations);
+        if ($includeTypo3Configuration) {
+            $configuration = $this->generateTypo3Configuration() . $configuration;
+        }
+
+        $this->flamingo->addConfiguration($configuration);
     }
 
     /**
-     * Parse given configuration
+     * Parse the global configuration
+     * This is mostly done once every configuration files have been added
      */
     public function parseConfiguration()
     {
@@ -119,6 +133,9 @@ class FlamingoService implements SingletonInterface
     }
 
     /**
+     * Run a specific task
+     * The task is dependent of its context and current configuration
+     *
      * @param string $taskName
      */
     public function run($taskName = 'default')

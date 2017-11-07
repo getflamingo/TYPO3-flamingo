@@ -1,4 +1,4 @@
-plugin.tx_flamingo {
+module.tx_flamingo {
 	settings {
 		yamlConfigurations {
 		}
