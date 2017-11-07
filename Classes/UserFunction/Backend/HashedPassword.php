@@ -4,13 +4,12 @@ namespace Ubermanu\Flamingo\UserFunction\Backend;
 
 use Flamingo\Core\TaskRuntime;
 use TYPO3\CMS\Saltedpasswords\Salt\SaltFactory;
-use Ubermanu\Flamingo\UserFunction\UserFunctionInterface;
 
 /**
  * Class HashedPassword
  * @package Ubermanu\Flamingo\UserFunction
  */
-class HashedPassword implements UserFunctionInterface
+class HashedPassword
 {
     /**
      * @var array
@@ -30,6 +29,7 @@ class HashedPassword implements UserFunctionInterface
      * @param array $configuration
      * @param TaskRuntime $taskRuntime
      * @return mixed
+     * @recursive
      */
     public static function run(array $configuration, TaskRuntime $taskRuntime)
     {
