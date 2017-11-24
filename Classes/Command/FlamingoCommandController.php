@@ -28,8 +28,7 @@ class FlamingoCommandController extends CommandController
         $force = false,
         $includeTypo3Configuration = true
     ) {
-        /** @var FlamingoService $flamingoService */
-        $flamingoService = $this->objectManager->get(FlamingoService::class);
+        $flamingoService = FlamingoService::getInstance();
 
         // Register logger using console messages
         \Analog\Analog::handler(function ($error) use ($debug, $force) {
@@ -49,8 +48,10 @@ class FlamingoCommandController extends CommandController
         });
 
         // Run specified task
-        $flamingoService->addConfiguration($filename, $includeTypo3Configuration);
-        $flamingoService->parseConfiguration();
-        $flamingoService->run($task);
+        $flamingoService
+            ->reset()
+            ->addConfiguration($filename, $includeTypo3Configuration)
+            ->parseConfiguration()
+            ->run($task);
     }
 }

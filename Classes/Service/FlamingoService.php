@@ -2,7 +2,6 @@
 
 namespace Ubermanu\Flamingo\Service;
 
-use Flamingo\Flamingo;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ubermanu\Flamingo\Exception\FileNotFoundException;
@@ -15,27 +14,43 @@ use Ubermanu\Flamingo\Utility\ConfigurationUtility;
 class FlamingoService implements SingletonInterface
 {
     /**
-     * @var Flamingo
+     * @var \Flamingo\Flamingo
      */
     protected $flamingo = null;
 
     /**
      * Include sources once and instantiate Flamingo task runner.
-     *
-     * Since it's a singleton, configuration won't be loaded twice
-     * TODO: Implement a reset() method to remove any remnant configuration
-     *
-     * @internal
+     * Since it's a singleton, configuration won't be loaded twice.
      */
-    public function initializeObject()
+    public function __construct()
     {
         ConfigurationUtility::requireLibraries();
-        $this->flamingo = GeneralUtility::makeInstance(Flamingo::class);
+        $this->reset();
+    }
 
-        // Load default configuration files from flamingo.phar
+    /**
+     * @return FlamingoService|object
+     */
+    public static function getInstance()
+    {
+        return GeneralUtility::makeInstance(self::class);
+    }
+
+    /**
+     * Reset current flamingo object
+     * Load default configuration files from flamingo.phar
+     *
+     * @return $this
+     */
+    public function reset()
+    {
+        $this->flamingo = new \Flamingo\Flamingo;
+
         foreach (ConfigurationUtility::defaultConfigurationFiles() as $configurationFilename) {
             $this->flamingo->addConfiguration(file_get_contents($configurationFilename));
         }
+
+        return $this;
     }
 
     /**
@@ -43,6 +58,7 @@ class FlamingoService implements SingletonInterface
      *
      * @param string $filename
      * @param bool $includeTypo3Configuration
+     * @return $this
      * @throws FileNotFoundException
      */
     public function addConfiguration($filename, $includeTypo3Configuration = true)
@@ -62,25 +78,34 @@ class FlamingoService implements SingletonInterface
         }
 
         $this->flamingo->addConfiguration($configuration);
+
+        return $this;
     }
 
     /**
      * Parse the global configuration.
      * This is mostly done once every configuration files have been added.
+     *
+     * @return $this
      */
     public function parseConfiguration()
     {
         $this->flamingo->parseConfiguration();
+
+        return $this;
     }
 
     /**
-     * Run a specific task.
+     * Run a specific task
      * The task is dependent of its context and current configuration.
      *
      * @param string $taskName
+     * @return $this
      */
     public function run($taskName = 'default')
     {
         $this->flamingo->run($taskName);
+
+        return $this;
     }
 }
