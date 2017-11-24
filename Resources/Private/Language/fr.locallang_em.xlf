@@ -4,10 +4,7 @@
 		<header/>
 		<body>
 			<trans-unit id="phar" approved="yes" xml:space="preserve">
-				<target state="translated">Chemin vers le fichier flamingo.phar</target>
-			</trans-unit>
-			<trans-unit id="typo3configuration" approved="yes" xml:space="preserve">
-				<target state="translated">Chemin vers le fichier YAML de configuration par défaut</target>
+				<target state="translated">Chemin vers le fichier éxécutable (flamingo.phar)</target>
 			</trans-unit>
 		</body>
 	</file>

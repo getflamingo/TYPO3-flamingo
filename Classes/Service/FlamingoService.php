@@ -15,7 +15,7 @@ use Ubermanu\Flamingo\Utility\ConfigurationUtility;
 class FlamingoService implements SingletonInterface
 {
     /**
-     * @var Flamingo;
+     * @var Flamingo
      */
     protected $flamingo = null;
 

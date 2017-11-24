@@ -1,0 +1,7 @@
+module.tx_flamingo {
+	settings {
+		yamlConfigurations {
+			10 = EXT:flamingo/Resources/Private/Flamingo/Database.yaml
+		}
+	}
+}

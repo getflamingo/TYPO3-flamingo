@@ -29,14 +29,14 @@ $EM_CONF[$_EXTKEY] = [
     'description' => 'Task runner for data processing',
     'category' => 'be',
     'state' => 'beta',
-    'version' => '0.16.0',
+    'version' => '0.17.0',
     'author' => 'Emmanuel Vodor',
     'author_email' => 'e.vodor@gmail.com',
     'uploadFolder' => false,
     'clearCacheOnLoad' => false,
     'constraints' => [
         'depends' => [
-            'typo3' => '6.2.0-8.99.99',
+            'typo3' => '8.7.0-8.7.99',
         ],
     ],
 ];

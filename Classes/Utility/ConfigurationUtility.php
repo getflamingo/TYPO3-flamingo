@@ -4,6 +4,8 @@ namespace Ubermanu\Flamingo\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use Ubermanu\Flamingo\Exception\FileNotFoundException;
 use Ubermanu\Flamingo\Exception\IncludedResourceException;
@@ -25,6 +27,27 @@ class ConfigurationUtility
     }
 
     /**
+     * Get extension BE settings
+     *
+     * @return array
+     */
+    protected static function getExtensionSettings()
+    {
+        /** @var ObjectManager $objectManager */
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+
+        /** @var ConfigurationManagerInterface $configurationManager */
+        $configurationManager = $objectManager->get(ConfigurationManagerInterface::class);
+
+        $settings = $configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
+            'Flamingo'
+        );
+
+        return $settings;
+    }
+
+    /**
      * Return the full path to the flamingo.phar executable
      * Throws error if the file could not be found
      *
@@ -33,7 +56,7 @@ class ConfigurationUtility
      */
     protected static function getPharPath()
     {
-        $pharPath = GeneralUtility::getFileAbsFileName(self::getExtensionConfiguration()['phar']);
+        $pharPath = self::translatePath(self::getExtensionConfiguration()['phar']);
 
         if (false === file_exists($pharPath)) {
             throw new FileNotFoundException(
@@ -74,16 +97,36 @@ class ConfigurationUtility
     }
 
     /**
-     * Generate a YAML configuration using Fluid rendering engine
-     * Pass TYPO3_CONF_VARS into it so global definitions can be used
-     * See the actual TYPO3.yaml for more information
+     * Get all the YAML files from the extension settings
+     * and generate the additional TYPO3 configuration
+     * TODO: Don't parse the real YAML files, move current to *.HTML
      *
      * @return string
      * @throws FileNotFoundException
      */
     public static function generateTypo3Configuration()
     {
-        $typo3ConfigurationFilename = GeneralUtility::getFileAbsFileName(self::getExtensionConfiguration()['typo3configuration']);
+        $yamlConfigurations = self::getExtensionSettings()['yamlConfigurations'];
+        $generatedConfiguration = '';
+
+        foreach ($yamlConfigurations as $filename) {
+            $generatedConfiguration .= self::generateTypo3ConfigurationFromTemplate($filename);
+        }
+
+        return $generatedConfiguration;
+    }
+
+    /**
+     * Generate a YAML configuration using Fluid rendering engine
+     * Pass TYPO3_CONF_VARS into it so global definitions can be used
+     *
+     * @param string $template
+     * @return string
+     * @throws FileNotFoundException
+     */
+    protected static function generateTypo3ConfigurationFromTemplate($template)
+    {
+        $typo3ConfigurationFilename = GeneralUtility::getFileAbsFileName($template);
 
         // File does not exist, throw error
         if (false === file_exists($typo3ConfigurationFilename)) {
@@ -107,5 +150,16 @@ class ConfigurationUtility
         $typo3Configuration->assign('TYPO3_CONF_VARS', $GLOBALS['TYPO3_CONF_VARS']);
 
         return $typo3Configuration->render();
+    }
+
+    /**
+     * Translate path relative to the website root.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected static function translatePath($path)
+    {
+        return (0 === strpos($path, '/') ? $path : GeneralUtility::getFileAbsFileName($path));
     }
 }

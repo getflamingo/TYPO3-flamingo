@@ -1,5 +1,2 @@
 # cat=settings; type=string; label=LLL:EXT:flamingo/Resources/Private/Language/locallang_em.xlf:phar
-phar = EXT:flamingo/Resources/Private/Libraries/flamingo.phar
-
-# cat=settings; type=string; label=LLL:EXT:flamingo/Resources/Private/Language/locallang_em.xlf:typo3configuration
-typo3configuration = EXT:flamingo/Resources/Private/Flamingo/TYPO3.yaml
+phar = flamingo.phar

@@ -2,8 +2,8 @@
 
 namespace Ubermanu\Flamingo\Command;
 
-use Analog\Analog;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
+use Ubermanu\Flamingo\Service\FlamingoService;
 use Ubermanu\Flamingo\Utility\ErrorUtility;
 
 /**
@@ -12,12 +12,6 @@ use Ubermanu\Flamingo\Utility\ErrorUtility;
  */
 class FlamingoCommandController extends CommandController
 {
-    /**
-     * @var \Ubermanu\Flamingo\Service\FlamingoService
-     * @inject
-     */
-    protected $flamingoService;
-
     /**
      * Execute a configured task
      *
@@ -34,11 +28,14 @@ class FlamingoCommandController extends CommandController
         $force = false,
         $includeTypo3Configuration = true
     ) {
+        /** @var FlamingoService $flamingoService */
+        $flamingoService = $this->objectManager->get(FlamingoService::class);
+
         // Register logger using console messages
-        Analog::handler(function ($error) use ($debug, $force) {
+        \Analog\Analog::handler(function ($error) use ($debug, $force) {
 
             // Skip debug
-            if ($debug === false && $error['level'] === Analog::DEBUG) {
+            if ($debug === false && $error['level'] === \Analog\Analog::DEBUG) {
                 return;
             }
 
@@ -46,24 +43,14 @@ class FlamingoCommandController extends CommandController
             $this->outputLine(ErrorUtility::getMessage($error));
 
             // The log is an error, stop
-            if ($force === false && $error['level'] === Analog::ERROR) {
-                $this->sendAndExit(Analog::ERROR);
+            if ($force === false && $error['level'] === \Analog\Analog::ERROR) {
+                $this->sendAndExit(\Analog\Analog::ERROR);
             }
         });
 
         // Run specified task
-        $this->flamingoService->addConfiguration($filename, $includeTypo3Configuration);
-        $this->flamingoService->parseConfiguration();
-        $this->flamingoService->run($task);
-    }
-
-    /**
-     * Current flamingo version
-     * @cli
-     */
-    public function versionCommand()
-    {
-        $this->flamingoService->parseConfiguration();
-        $this->outputLine($GLOBALS['FLAMINGO']['Version']);
+        $flamingoService->addConfiguration($filename, $includeTypo3Configuration);
+        $flamingoService->parseConfiguration();
+        $flamingoService->run($task);
     }
 }
