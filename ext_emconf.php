@@ -4,7 +4,7 @@
  *
  *  Copyright notice
  *
- *  (c) 2017 Emmanuel Vodor, https://github.com/ubermanu
+ *  (c) 2018 Emmanuel Vodor, https://github.com/ubermanu
  *
  *  All rights reserved
  *
@@ -26,10 +26,10 @@
 
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Flamingo',
-    'description' => 'Task runner for data processing',
+    'description' => 'TYPO3 wrapper for Flamingo, a task runner for data processing',
     'category' => 'be',
     'state' => 'beta',
-    'version' => '0.18.0',
+    'version' => '0.19.0',
     'author' => 'Emmanuel Vodor',
     'author_email' => 'e.vodor@gmail.com',
     'uploadFolder' => false,

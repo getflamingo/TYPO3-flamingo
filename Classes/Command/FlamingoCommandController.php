@@ -13,21 +13,14 @@ use Ubermanu\Flamingo\Utility\ErrorUtility;
 class FlamingoCommandController extends CommandController
 {
     /**
-     * Execute a configured task
+     * Execute a configured task.
      *
-     * @param string $filename
      * @param string $task
      * @param bool $debug
      * @param bool $force
-     * @param bool $includeTypo3Configuration
      */
-    public function runCommand(
-        $filename,
-        $task = 'default',
-        $debug = false,
-        $force = false,
-        $includeTypo3Configuration = true
-    ) {
+    public function runCommand($task, $debug = false, $force = false)
+    {
         $flamingoService = FlamingoService::getInstance();
 
         // Register logger using console messages
@@ -48,10 +41,6 @@ class FlamingoCommandController extends CommandController
         });
 
         // Run specified task
-        $flamingoService
-            ->reset()
-            ->addConfiguration($filename, $includeTypo3Configuration)
-            ->parseConfiguration()
-            ->run($task);
+        $flamingoService->run($task);
     }
 }

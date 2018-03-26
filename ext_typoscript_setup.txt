@@ -1,7 +1,8 @@
-module.tx_flamingo {
-	settings {
-		yamlConfigurations {
-			10 = EXT:flamingo/Resources/Private/Flamingo/Database.yaml
+config.tx_extbase {
+	persistence {
+		objects {
+			\Flamingo\Reader\DatabaseReader.className = \Ubermanu\Flamingo\Flamingo\Reader\DatabaseReader
+			\Flamingo\Writer\DatabaseWriter.className = \Ubermanu\Flamingo\Flamingo\Writer\DatabaseWriter
 		}
 	}
 }

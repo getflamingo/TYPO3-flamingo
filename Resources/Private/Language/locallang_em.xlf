@@ -4,7 +4,7 @@
 		<header/>
 		<body>
 			<trans-unit id="phar" xml:space="preserve">
-				<source>Path to PHAR executable (flamingo.phar)</source>
+				<source>Path to executable (flamingo.phar)</source>
 			</trans-unit>
 		</body>
 	</file>
